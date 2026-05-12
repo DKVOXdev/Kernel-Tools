@@ -484,7 +484,7 @@ while True:
         continue
 
     if choice in ('i', 'info'):
-        webbrowser.open("https://discord.gg/jkz5Gn6rMs")
+        webbrowser.open("https://t.me/kernelsupportt")
         webbrowser.open("https://guns.lol/2437")
         continue
 
