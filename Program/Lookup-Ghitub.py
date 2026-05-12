@@ -1,6 +1,5 @@
 # Copyright (c) Kernel-Tool
 # See the file 'LICENSE' for copying permission
-# ----------------------------------------------------------------------------------------------------------------------------------------------------------|
 # EN:
 #     - Do not touch or modify the code below. If there is an error, please contact the owner, but under no circumstances should you touch the code.
 #     - Do not resell this tool, do not credit it to yours.
@@ -9,27 +8,10 @@
 #     - Ne revendez pas ce tool, ne le créditez pas au vôtre.
 
 import requests
-import os
-from colorama import Fore, Style, init
-import fade
 from datetime import datetime
 from collections import defaultdict
-
-init(autoreset=True)
-
-def clear_console():
-    os.system("cls" if os.name == "nt" else "clear")
-
-def ascii_logo():
-    logo = f"""\n
-██╗   ██╗███████╗███████╗██████╗
-██║   ██║██╔════╝██╔════╝██╔══██╗
-██║   ██║███████╗█████╗  ██████╔╝
-██║   ██║╚════██║██╔══╝  ██╔══██╗
-╚██████╔╝███████║███████╗██║  ██║
- ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝
-    """
-    print(fade.purpleblue(logo))
+from Config.Config import *
+from Config.Util import *
 
 def format_date(date_str):
     if not date_str:
@@ -63,15 +45,13 @@ def get_paginated_data(url):
     return results
 
 def get_user_info(username):
-    url = f"https://api.github.com/users/{username}"
-    return cached_fetch(url)
+    return cached_fetch(f"https://api.github.com/users/{username}")
 
 def get_email_from_commits(username):
     try:
         repos = get_paginated_data(f"https://api.github.com/users/{username}/repos")
         for repo in repos:
-            commits_url = f"https://api.github.com/repos/{username}/{repo['name']}/commits"
-            commits = cached_fetch(commits_url)
+            commits = cached_fetch(f"https://api.github.com/repos/{username}/{repo['name']}/commits")
             if isinstance(commits, list) and commits:
                 author = commits[0].get("commit", {}).get("author", {})
                 email = author.get("email", "")
@@ -84,14 +64,14 @@ def get_email_from_commits(username):
 
 def get_languages_stats(username):
     repos = get_paginated_data(f"https://api.github.com/users/{username}/repos")
-    lang_bytes = defaultdict(int)
+    lang_bytes = {}
     for repo in repos:
         languages_url = repo.get("languages_url")
         if languages_url:
             langs = cached_fetch(languages_url)
             if langs:
                 for lang, bytes_count in langs.items():
-                    lang_bytes[lang] += bytes_count
+                    lang_bytes[lang] = lang_bytes.get(lang, 0) + bytes_count
     sorted_langs = sorted(lang_bytes.items(), key=lambda x: x[1], reverse=True)
     top_langs = [lang for lang, _ in sorted_langs[:3]]
     return top_langs if top_langs else ["N/A"]
@@ -103,46 +83,53 @@ def count_starred_projects(username):
     starred = get_paginated_data(f"https://api.github.com/users/{username}/starred")
     return len(starred)
 
-def main():
-    clear_console()
-    ascii_logo()
-    username = input(" Enter GitHub username: ").strip()
+Title("Lookup Github")
+
+try:
+    username = input(f"\033[96m {INPUT} GitHub Username -> \033[0m").strip()
+
     if not username:
-        print(Fore.RED + " No username entered.")
-        return
+        print(f"\033[96m {ERROR} No username entered.\033[0m")
+        Continue()
+        Reset()
+    else:
+        user = get_user_info(username)
+        if not user:
+            print(f"\033[96m {ERROR} User not found.\033[0m")
+            Continue()
+            Reset()
+        else:
+            name, email = get_email_from_commits(username)
+            repos = get_paginated_data(f"https://api.github.com/users/{username}/repos")
+            user_stars = count_total_stars(repos)
+            projet_stars = count_starred_projects(username)
+            top_languages = get_languages_stats(username)
+            twitter = user.get("twitter_username")
 
-    user = get_user_info(username)
-    if not user:
-        print(Fore.RED + " User not found.")
-        return
+            print(f"""
+\033[96m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ {INFO_ADD} Username        : {user.get('login')}
+ {INFO_ADD} Name            : {user.get('name')}
+ {INFO_ADD} Email           : {email}
+ {INFO_ADD} Public Repos    : {user.get('public_repos')}
+ {INFO_ADD} Followers       : {user.get('followers')}
+ {INFO_ADD} User Stars      : {user_stars}
+ {INFO_ADD} Project Stars   : {projet_stars}
+ {INFO_ADD} Top Languages   : {', '.join(top_languages)}
+ {INFO_ADD} Location        : {user.get('location')}
+ {INFO_ADD} Bio             : {user.get('bio')}
+ {INFO_ADD} Company         : {user.get('company')}
+ {INFO_ADD} Blog            : {user.get('blog')}
+ {INFO_ADD} Twitter         : {"@" + twitter if twitter else "N/A"}
+ {INFO_ADD} Created At      : {format_date(user.get('created_at'))}
+ {INFO_ADD} Updated At      : {format_date(user.get('updated_at'))}
+ {INFO_ADD} Avatar URL      : {user.get('avatar_url')}
+ {INFO_ADD} GitHub URL      : {user.get('html_url')}
+\033[96m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+\033[0m""")
 
-    name, email = get_email_from_commits(username)
-    repos = get_paginated_data(f"https://api.github.com/users/{username}/repos")
-    user_stars = count_total_stars(repos)
-    projet_stars = count_starred_projects(username)
-    top_languages = get_languages_stats(username)
+            Continue()
+            Reset()
 
-    print(Fore.GREEN + "\n GitHub User Info:\n")
-    print(f" Username        : {user.get('login')}")
-    print(f" Name            : {user.get('name')}")
-    print(f" Email           : {email}")
-    print(f" Public Repos    : {user.get('public_repos')}")
-    print(f" Followers       : {user.get('followers')}")
-    print(f" User Stars      : {user_stars}")
-    print(f" Project Stars   : {projet_stars}")
-    print(f" Top Languages   : {', '.join(top_languages)}")
-    print(f" Location        : {user.get('location')}")
-    print(f" Bio             : {user.get('bio')}")
-    print(f" Company         : {user.get('company')}")
-    print(f" Blog            : {user.get('blog')}")
-    twitter = user.get("twitter_username")
-    print(f" Twitter         : @{twitter}" if twitter else " Twitter         : N/A")
-    print(f" Created At      : {format_date(user.get('created_at'))}")
-    print(f" Updated At      : {format_date(user.get('updated_at'))}")
-    print(f" Avatar URL      : {user.get('avatar_url')}")
-    print(f" GitHub URL      : {user.get('html_url')}")
-
-    input("\n Press Enter to return to menu")
-
-if __name__ == "__main__":
-    main()
+except Exception as e:
+    Error(e)

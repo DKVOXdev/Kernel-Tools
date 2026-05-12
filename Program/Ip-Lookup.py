@@ -1,78 +1,59 @@
 # Copyright (c) Kernel-Tool
 # See the file 'LICENSE' for copying permission
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------|
-# EN:
+# EN: 
 #     - Do not touch or modify the code below. If there is an error, please contact the owner, but under no circumstances should you touch the code.
 #     - Do not resell this tool, do not credit it to yours.
-# FR:
+# FR: 
 #     - Ne pas toucher ni modifier le code ci-dessous. En cas d'erreur, veuillez contacter le propriétaire, mais en aucun cas vous ne devez toucher au code.
 #     - Ne revendez pas ce tool, ne le créditez pas au vôtre.
 
-import requests
-import os
-import platform
+from Config.Util import *
+from Config.Config import *
+try:
+    import requests
+except Exception as e:
+    ErrorModule(e)
 
-C = "\033[96m"
-R = "\033[0m"
+Title("Ip Lookup")
 
-if platform.system().lower() == "windows":
-    try:
-        import ctypes
-        ctypes.windll.kernel32.SetConsoleMode(
-            ctypes.windll.kernel32.GetStdHandle(-11), 7
-        )
-    except:
-        pass
+try:
+    ip = input(f"\n\033[96m{current_time_hour()} {INPUT} Ip -> \033[0m")
 
-def clear():
-    os.system("cls" if os.name == "nt" else "clear")
+    response = requests.get(f"http://ip-api.com/json/{ip}")
+    api = response.json()
 
-def lookup(ip):
-    try:
-        r = requests.get(f"http://ip-api.com/json/{ip}?fields=status,message,query,country,regionName,city,zip,isp,org,timezone,lat,lon,proxy,hosting", timeout=10)
-        data = r.json()
+    status = "Valid" if api.get('status') == "success" else "Invalid"
+    country = api.get('country', "None")
+    country_code = api.get('countryCode', "None")
+    region = api.get('regionName', "None")
+    region_code = api.get('region', "None")
+    zip_code = api.get('zip', "None")
+    city = api.get('city', "None")
+    latitude = api.get('lat', "None")
+    longitude = api.get('lon', "None")
+    timezone = api.get('timezone', "None")
+    isp = api.get('isp', "None")
+    org = api.get('org', "None")
+    as_host = api.get('as', "None")
 
-        if data.get("status") != "success":
-            print(f"{C}API Error: {data.get('message', 'N/A')}{R}")
-            return
+    print(f"""
+\033[96m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ {INFO_ADD} Status    : {status}
+ {INFO_ADD} Country   : {country} ({country_code})
+ {INFO_ADD} Region    : {region} ({region_code})
+ {INFO_ADD} Zip       : {zip_code}
+ {INFO_ADD} City      : {city}
+ {INFO_ADD} Latitude  : {latitude}
+ {INFO_ADD} Longitude : {longitude}
+ {INFO_ADD} Timezone  : {timezone}
+ {INFO_ADD} Isp       : {isp}
+ {INFO_ADD} Org       : {org}
+ {INFO_ADD} As        : {as_host}
+\033[96m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+\033[0m""")
 
-        lat = data.get("lat", "N/A")
-        lon = data.get("lon", "N/A")
-
-        is_proxy = data.get("proxy", False)
-        is_hosting = data.get("hosting", False)
-
-        vpn_detected = is_proxy or is_hosting
-        vpn_color = "\033[91m" if vpn_detected else "\033[92m"
-        vpn_status = str(vpn_detected)
-
-        print(f"{C}┌──────────────────────────────────────────────┐{R}")
-        print(f"{C}│               IP LOOKUP RESULT               │{R}")
-        print(f"{C}├──────────────────────────────────────────────┤{R}")
-        print(f"{C}│ IP        │ {data.get('query','N/A'):<36} │{R}")
-        print(f"{C}│ Country   │ {data.get('country','N/A'):<36} │{R}")
-        print(f"{C}│ Region    │ {data.get('regionName','N/A'):<36} │{R}")
-        print(f"{C}│ City      │ {data.get('city','N/A'):<36} │{R}")
-        print(f"{C}│ ZIP       │ {data.get('zip','N/A'):<36} │{R}")
-        print(f"{C}│ ISP/Org   │ {data.get('isp','N/A'):<36} │{R}")
-        print(f"{C}│ Timezone  │ {data.get('timezone','N/A'):<36} │{R}")
-        print(f"{C}│ Latitude  │ {lat:<36} │{R}")
-        print(f"{C}│ Longitude │ {lon:<36} │{R}")
-        print(f"{C}│ Maps      │ https://maps.google.com/?q={lat},{lon:<9} │{R}")
-        print(f"{C}├──────────────────────────────────────────────┤{R}")
-        print(f"{C}│ VPN/Proxy │ {vpn_color}{vpn_status:<36}{R}{C} │{R}")
-        print(f"{C}└──────────────────────────────────────────────┘{R}")
-
-    except Exception as e:
-        print(f"{C}Connection or API error: {e}{R}")
-
-def main():
-    clear()
-    ip = input(f"{C}Enter IP: {R}").strip()
-    if ip:
-        clear()
-        lookup(ip)
-        input(f"\n{C}Press Enter to return to the main menu{R}")
-
-if __name__ == "__main__":
-    main()
+    Continue()
+    Reset()
+except Exception as e:
+    Error(e)

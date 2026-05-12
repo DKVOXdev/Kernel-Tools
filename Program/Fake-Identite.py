@@ -16,6 +16,8 @@ from datetime import datetime
 from faker import Faker
 import random
 from colorama import Fore, Style, init
+from Config.Config import *
+from Config.Util import *
 
 init(autoreset=True)
 
@@ -29,52 +31,14 @@ countries = {
 selected_country = "1"
 fake = Faker(countries[selected_country][1])
 
-def clear_screen():
-    os.system("cls" if os.name == "nt" else "clear")
-
-def title(text):
-    return f"{Fore.CYAN}{Style.BRIGHT}{text}{Style.RESET_ALL}"
+def header():
+    print(fake_identity_banner)
 
 def label(text):
-    return f"{Fore.MAGENTA}{text:<30}{Style.RESET_ALL}"
+    return f"\033[96m{text:<30}\033[0m"
 
 def value(text):
-    return f"{Fore.YELLOW}{text}{Style.RESET_ALL}"
-
-def header():
-    clear_screen()
-    print(Fore.RED + "=" * 80)
-    print(Fore.RED + r"""
-                                          ...:----:...
-                                     .:=#@@@@@@@@@@@@@@%*-..
-                                  .:#@@@@@@@%#*****#%@@@@@@@+..
-                               ..-@@@@@%-...... ........+@@@@@@..
-                               :%@@@@=..   .#@@@@@@@@#=....+@@@@*.
-                             .+@@@@=.      .*@@@%@@@@@@@@=...*@@@@:.
-                            .#@@@%.                 .=@@@@@=. .@@@@-.
-                           .=@@@#.                    .:%@@@*. -@@@%:.
-                           .%@@@-                       .*@@*. .+@@@=.
-                           :@@@#.                              .-@@@#.
-                           -@@@#                                :%@@@.
-                           :@@@#.                              .-@@@#.
-                           .%@@@-.                             .+@@@=.
-                           .+@@@#.                             -@@@%:.
-                            .*@@@%.                          .:@@@@-.
-                             .+@@@@=..                     ..*@@@@:.
-                               :%@@@@-..                ...+@@@@*.
-                               ..-@@@@@%=...         ...*@@@@@@@@#.
-                                  .:*@@@@@@@%*++++**@@@@@@@@=:*@@@@#:.
-                                     ..=%@@@@@@@@@@@@@@%#-.   ..*@@@@%:.
-                                        .....:::::::....       ...+@@@@%:
-                                                                  ..+@@@@%-.
-                                                                    ..=@@@@%-.
-                                                                      ..=@@@@@=.
-                                                                         .=%@@@@=.
-                                                                          ..-%@@@-.
-                                                                             ....
-    """.center(78))
-    print(Fore.RED + "=" * 80)
-    print()
+    return f"\033[96m{text}\033[0m"
 
 def generate_mobile():
     _, _, _, phone_prefix, prefixes = countries[selected_country]
@@ -220,15 +184,14 @@ def export_identity(data):
     filename = f"exports/identity_{full_name}_{timestamp}.json"
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
-    print(Fore.GREEN + f"\nIdentity exported: {filename}")
+    print(f"\033[96m\n {INFO_ADD} Identity exported: {filename}\033[0m")
 
 def show_category(title_txt, data_dict):
-    print("\n" + title(f"<< {title_txt} >>") + "\n")
+    print(f"\n\033[96m<< {title_txt} >>\033[0m\n")
     for k, v in data_dict.items():
-        print(f" {label(k)} : {value(v)}")
+        print(f" {label(k)} : {value(str(v))}")
 
 def display_identity(data):
-    clear_screen()
     header()
     show_category("IDENTITY", data["identity"])
     show_category("ADDRESS", data["address"])
@@ -236,18 +199,18 @@ def display_identity(data):
     show_category("BANKING", data["banking"])
     show_category("COMPANY", data["company"])
     show_category("VEHICLE", data["vehicle"])
-    print(Fore.YELLOW + "\n[E] Export | [C] Copy | [ENTER] Back")
-    choice = input(Fore.GREEN + "\nChoice: ").strip().upper()
+    print(f"\033[96m\n [E] Export | [C] Copy | [ENTER] Back\033[0m")
+    choice = input(f"\033[96m\n {INPUT} Choice: \033[0m").strip().upper()
     if choice == "E":
         export_identity(data)
     elif choice == "C":
         try:
             import pyperclip
             pyperclip.copy(json.dumps(data, ensure_ascii=False, indent=2))
-            print(Fore.GREEN + "\nCopied to clipboard!")
+            print(f"\033[96m\n {INFO_ADD} Copied to clipboard!\033[0m")
         except ImportError:
-            print(Fore.RED + "\npyperclip not installed. Install it via pip.")
-    input(Fore.GREEN + "\nPress ENTER...")
+            print(f"\033[96m {ERROR} pyperclip not installed.\033[0m")
+    Continue()
 
 def generate_random():
     display_identity(create_identity("random"))
@@ -260,38 +223,36 @@ def generate_woman():
 
 def choose_country():
     global selected_country, fake
-    clear_screen()
     header()
-    print(title("SELECT COUNTRY:\n"))
+    print(f"\033[96m SELECT COUNTRY:\n\033[0m")
     for key, (name, _, _, prefix, _) in countries.items():
-        print(f" [{key}] {name} ({prefix})")
-    choice = input("\nChoice: ").strip()
+        print(f"\033[96m [{key}] {name} ({prefix})\033[0m")
+    choice = input(f"\033[96m\n {INPUT} Choice: \033[0m").strip()
     if choice in countries:
         selected_country = choice
         fake = Faker(countries[selected_country][1])
-        print(Fore.GREEN + "\nCountry updated!")
+        print(f"\033[96m\n {INFO_ADD} Country updated!\033[0m")
     else:
-        print(Fore.RED + "\nInvalid choice.")
-    input(Fore.GREEN + "\nPress ENTER...")
+        print(f"\033[96m {ERROR} Invalid choice.\033[0m")
+    Continue()
 
 def create_custom_identity():
-    clear_screen()
     header()
-    print(Fore.YELLOW + "Enter '0' for automatic generation.")
-    gender = input(Fore.RED + "Gender (M/F): ").upper()
+    print(f"\033[96m Enter '0' for automatic generation.\033[0m")
+    gender = input(f"\033[96m {INPUT} Gender (M/F): \033[0m").upper()
     if gender not in ["M", "F"]:
         gender = random.choice(["M", "F"])
-    firstname = input(Fore.RED + "First Name: ")
+    firstname = input(f"\033[96m {INPUT} First Name: \033[0m")
     if firstname == "0":
         firstname = fake.first_name_male() if gender == "M" else fake.first_name_female()
-    lastname = input(Fore.RED + "Last Name: ")
+    lastname = input(f"\033[96m {INPUT} Last Name: \033[0m")
     if lastname == "0":
         lastname = fake.last_name()
-    email = input(Fore.RED + "Email: ")
+    email = input(f"\033[96m {INPUT} Email: \033[0m")
     if email == "0":
         email = f"{firstname.lower()}.{lastname.lower()}@{random.choice(['gmail.com', 'outlook.com'])}"
     birth_info = generate_birth_date()
-    phone = input(Fore.RED + "Local Phone: ")
+    phone = input(f"\033[96m {INPUT} Local Phone: \033[0m")
     if phone == "0":
         phone = generate_mobile()
     address = generate_address()
@@ -342,57 +303,54 @@ def create_custom_identity():
     display_identity(identity)
 
 def gen_password():
-    clear_screen()
     header()
-    print(title("PASSWORD GENERATOR\n"))
+    print(f"\033[96m PASSWORD GENERATOR\n\033[0m")
     try:
-        length = int(input(Fore.RED + "Length (8-64): ") or "16")
+        length = int(input(f"\033[96m {INPUT} Length (8-64): \033[0m") or "16")
         length = max(8, min(length, 64))
     except ValueError:
         length = 16
     password = fake.password(length=length, special_chars=True, digits=True, upper_case=True)
-    print(Fore.GREEN + f"\nPassword: {password}\n")
+    print(f"\033[96m\n {INFO_ADD} Password: {password}\n\033[0m")
     try:
         import pyperclip
         pyperclip.copy(password)
-        print(Fore.GREEN + "Copied to clipboard!")
+        print(f"\033[96m {INFO_ADD} Copied to clipboard!\033[0m")
     except ImportError:
         pass
-    input(Fore.GREEN + "\nPress ENTER...")
+    Continue()
 
 def batch_generate():
-    clear_screen()
     header()
-    print(title("BATCH GENERATION\n"))
+    print(f"\033[96m BATCH GENERATION\n\033[0m")
     try:
-        count = int(input(Fore.RED + "Number of identities (1-100): "))
+        count = int(input(f"\033[96m {INPUT} Number of identities (1-100): \033[0m"))
         count = max(1, min(count, 100))
-        print(Fore.YELLOW + "\n[1] Random  [2] Male  [3] Female")
-        type_choice = input(Fore.RED + "\nType: ").strip()
+        print(f"\033[96m\n [1] Random  [2] Male  [3] Female\033[0m")
+        type_choice = input(f"\033[96m {INPUT} Type: \033[0m").strip()
         identities = []
-        print(Fore.GREEN + f"\nGenerating {count} identities...")
+        print(f"\033[96m\n Generating {count} identities...\033[0m")
         for i in range(count):
             gender = "M" if type_choice == "2" else "F" if type_choice == "3" else random.choice(["M", "F"])
             identities.append(create_identity(gender))
-            print(Fore.CYAN + f"  {i+1}/{count} generated")
+            print(f"\033[96m  {i+1}/{count} generated\033[0m")
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         if not os.path.exists("exports"):
             os.makedirs("exports")
         filename = f"exports/batch_{count}_{timestamp}.json"
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(identities, f, ensure_ascii=False, indent=4)
-        print(Fore.GREEN + f"\nExported: {filename}")
+        print(f"\033[96m\n {INFO_ADD} Exported: {filename}\033[0m")
     except ValueError:
-        print(Fore.RED + "\nInvalid number.")
-    input(Fore.GREEN + "\nPress ENTER...")
+        print(f"\033[96m {ERROR} Invalid number.\033[0m")
+    Continue()
 
 def view_history():
-    clear_screen()
     header()
-    print(title("EXPORT HISTORY\n"))
+    print(f"\033[96m EXPORT HISTORY\n\033[0m")
     if not os.path.exists("exports"):
-        print(Fore.RED + "No exports found.")
-        input(Fore.GREEN + "\nPress ENTER...")
+        print(f"\033[96m {ERROR} No exports found.\033[0m")
+        Continue()
         return
     files = sorted(
         [f for f in os.listdir("exports") if f.endswith('.json')],
@@ -400,54 +358,57 @@ def view_history():
         reverse=True
     )
     if not files:
-        print(Fore.RED + "No exports found.")
+        print(f"\033[96m {ERROR} No exports found.\033[0m")
     else:
-        print(Fore.YELLOW + f"{len(files)} file(s)\n")
+        print(f"\033[96m {len(files)} file(s)\n\033[0m")
         for i, file in enumerate(files, 1):
             path = os.path.join("exports", file)
             size = os.path.getsize(path) // 1024
             mod_time = datetime.fromtimestamp(os.path.getmtime(path)).strftime("%d/%m/%Y %H:%M")
-            print(f"{Fore.CYAN}{i:2}. {Fore.YELLOW}{file} {Fore.GREEN}({size} KB) {Fore.MAGENTA}{mod_time}")
-    input(Fore.GREEN + "\nPress ENTER...")
+            print(f"\033[96m  {i:2}. {file} ({size} KB) {mod_time}\033[0m")
+    Continue()
 
 def menu():
-    clear_screen()
     header()
     print()
-    print(Fore.RED + " [1] Random identity")
-    print(Fore.RED + " [2] Male identity")
-    print(Fore.RED + " [3] Female identity")
-    print(Fore.RED + " [4] Select country")
-    print(Fore.RED + " [5] Custom identity")
-    print(Fore.RED + " [6] Generate password")
-    print(Fore.RED + " [7] Batch identities")
-    print(Fore.RED + " [8] View export history")
-    print(Fore.RED + " [9] Return to main menu" + Style.RESET_ALL)
+    print(f"\033[96m [1] Random identity\033[0m")
+    print(f"\033[96m [2] Male identity\033[0m")
+    print(f"\033[96m [3] Female identity\033[0m")
+    print(f"\033[96m [4] Select country\033[0m")
+    print(f"\033[96m [5] Custom identity\033[0m")
+    print(f"\033[96m [6] Generate password\033[0m")
+    print(f"\033[96m [7] Batch identities\033[0m")
+    print(f"\033[96m [8] View export history\033[0m")
+    print(f"\033[96m [9] Return to main menu\033[0m")
 
-def main():
-    while True:
-        menu()
-        choice = input("\nChoice: ").strip()
-        if choice == "1":
-            generate_random()
-        elif choice == "2":
-            generate_man()
-        elif choice == "3":
-            generate_woman()
-        elif choice == "4":
-            choose_country()
-        elif choice == "5":
-            create_custom_identity()
-        elif choice == "6":
-            gen_password()
-        elif choice == "7":
-            batch_generate()
-        elif choice == "8":
-            view_history()
-        elif choice == "9":
-            clear_screen()
-            sys.exit(0)
-        else:
-            input(Fore.RED + "\nInvalid choice. Press ENTER...")
+try:
+    def main():
+        while True:
+            menu()
+            choice = input(f"\033[96m\n {INPUT} Choice: \033[0m").strip()
+            if choice == "1":
+                generate_random()
+            elif choice == "2":
+                generate_man()
+            elif choice == "3":
+                generate_woman()
+            elif choice == "4":
+                choose_country()
+            elif choice == "5":
+                create_custom_identity()
+            elif choice == "6":
+                gen_password()
+            elif choice == "7":
+                batch_generate()
+            elif choice == "8":
+                view_history()
+            elif choice == "9":
+                print(f"\033[96m\n {INFO_ADD} Au revoir!\033[0m")
+                sys.exit(0)
+            else:
+                Error("Invalid choice.")
 
-main()
+    main()
+except Exception as e:
+    Error(e)
+

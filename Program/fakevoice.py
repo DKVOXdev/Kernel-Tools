@@ -48,14 +48,12 @@ async def _get_available_voice_shortnames():
     return _AVAILABLE_VOICE_SHORTNAMES
 
 def play_audio(filepath):
-    """Play an audio file with the default Windows player."""
     try:
         os.startfile(filepath)
     except Exception as e:
         print(f'{Fore.RED}[ERROR] Cannot play audio: {e}{Style.RESET_ALL}')
 
 async def generate_female_voice(text, voice_key='fr_eloise'):
-    """Generate a natural-sounding female voice with best quality."""
     try:
         print(f'{Fore.RED}[GENERATION] Synthesizing female voice: "{text}"{Style.RESET_ALL}')
         voice = FEMALE_VOICES.get(voice_key, FEMALE_VOICES['fr_eloise'])
@@ -100,23 +98,23 @@ async def generate_female_voice(text, voice_key='fr_eloise'):
 
 def main():
     ascii_art = '''
-                 .#@.           
-               .%@@@.           
-             :@@@@@@.  ...      
-          .:@@@@@@@@. .%@@@=.   
-         -@@@@@@@@@@.    .#@@=. 
--@@@@@@-*@@@@@@@@@@@. .@@: .@@* 
+                 .#@.
+               .%@@@.
+             :@@@@@@.  ...
+          .:@@@@@@@@. .%@@@=.
+         -@@@@@@@@@@.    .#@@=.
+-@@@@@@-*@@@@@@@@@@@. .@@: .@@*
 @@@@@@@-*@@@@@@@@@@@.  .%@#..@@+
 @@@@@@@-*@@@@@@@@@@@.   .%@* .@@
 @@@@@@@-*@@@@@@@@@@@.    :@#  @@
 @@@@@@@-*@@@@@@@@@@@.   .%@* .@@
 @@@@@@@-*@@@@@@@@@@@.  .%@#..@@+
--@@@@@@-*@@@@@@@@@@@. .@@: .@@* 
-         -@@@@@@@@@@.    .*@@=. 
-          .:@@@@@@@@. .#@@@=.   
-             :@@@@@@.  ...      
-               .%@@@.           
-                 .#@.           
+-@@@@@@-*@@@@@@@@@@@. .@@: .@@*
+         -@@@@@@@@@@.    .*@@=.
+          .:@@@@@@@@. .#@@@=.
+             :@@@@@@.  ...
+               .%@@@.
+                 .#@.
     '''
     print(f'{Fore.RED}{ascii_art}{Style.RESET_ALL}')
     print(f'{Fore.RED}{"══════════════════════════════════════════════════"}{Style.RESET_ALL}')
@@ -146,9 +144,6 @@ def main():
             print(f'\n{Fore.RED} Goodbye!{Style.RESET_ALL}')
 
 if __name__ == '__main__':
-    def clear_screen():
-        os.system('cls' if os.name == 'nt' else 'clear')
-    clear_screen()
     try:
         main()
     except KeyboardInterrupt:

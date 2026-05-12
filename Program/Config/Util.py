@@ -1,6 +1,6 @@
 # Copyright (c) Kernel-Tool
 # See the file 'LICENSE' for copying permission
-# ----------------------------------------------------------------------------------------------------------------------------------------------------------|
+# ---------------------------------------------------------------------------
 # EN:
 #     - Do not touch or modify the code below. If there is an error, please contact the owner, but under no circumstances should you touch the code.
 #     - Do not resell this tool, do not credit it to yours.
@@ -12,7 +12,11 @@ import os
 import sys
 import time
 import random
+from datetime import datetime
 from Config.Config import *
+
+def current_time_hour():
+    return datetime.now().strftime("%H:%M:%S")
 
 def Title(title):
     try:
@@ -23,13 +27,13 @@ def Title(title):
         except:
             pass
         box_width = min(width - 4, 70)
-        print(f"\n╔{'═' * box_width}╗")
+        print(f"\033[96m\n╔{'═' * box_width}╗")
         print(f"║{title.center(box_width)}║")
-        print(f"╚{'═' * box_width}╝\n")
+        print(f"╚{'═' * box_width}╝\n\033[0m")
     except:
-        print(f"\n╔{'═' * 70}╗")
+        print(f"\033[96m\n╔{'═' * 70}╗")
         print(f"║{title.center(70)}║")
-        print(f"╚{'═' * 70}╝\n")
+        print(f"╚{'═' * 70}╝\n\033[0m")
 
 def Slow(text):
     try:
@@ -51,43 +55,43 @@ def ChoiceUserAgent():
     return random.choice(user_agents)
 
 def Choice1TokenDiscord():
-    token = input(f"{BEFORE + AFTER} {INPUT} Token -> {reset}")
+    token = input(f"\033[96m {INPUT} Token -> \033[0m")
     return token
 
 def Censored(text):
     pass
 
 def ErrorModule(e):
-    print(f"{BEFORE + AFTER} {ERROR} Module Error: {white}{str(e)}{red}")
-    print(f"{BEFORE + AFTER} {ERROR} Please install the required module.{red}")
-    input(f"{BEFORE + AFTER} {INPUT} Press Enter to continue...{reset}")
+    print(f"\033[96m {ERROR} Module Error: {str(e)}\033[0m")
+    print(f"\033[96m {ERROR} Please install the required module.\033[0m")
+    input(f"\033[96m {INPUT} Press Enter to continue...\033[0m")
 
 def Error(e):
-    print(f"{BEFORE + AFTER} {ERROR} Error: {white}{str(e)}{red}")
-    input(f"{BEFORE + AFTER} {INPUT} Press Enter to continue...{reset}")
+    print(f"\033[96m {ERROR} Error: {str(e)}\033[0m")
+    input(f"\033[96m {INPUT} Press Enter to continue...\033[0m")
 
 def ErrorId():
-    print(f"{BEFORE + AFTER} {ERROR} Invalid ID provided.{red}")
-    input(f"{BEFORE + AFTER} {INPUT} Press Enter to continue...{reset}")
+    print(f"\033[96m {ERROR} Invalid ID provided.\033[0m")
+    input(f"\033[96m {INPUT} Press Enter to continue...\033[0m")
 
 def ErrorNumber():
-    print(f"{BEFORE + AFTER} {ERROR} Invalid number provided.{red}")
-    input(f"{BEFORE + AFTER} {INPUT} Press Enter to continue...{reset}")
+    print(f"\033[96m {ERROR} Invalid number provided.\033[0m")
+    input(f"\033[96m {INPUT} Press Enter to continue...\033[0m")
 
 def ErrorChoice():
-    print(f"{BEFORE + AFTER} {ERROR} Invalid choice.{red}")
-    input(f"{BEFORE + AFTER} {INPUT} Press Enter to continue...{reset}")
+    print(f"\033[96m {ERROR} Invalid choice.\033[0m")
+    input(f"\033[96m {INPUT} Press Enter to continue...\033[0m")
 
 def ErrorToken():
-    print(f"{BEFORE + AFTER} {ERROR} Invalid token provided.{red}")
-    input(f"{BEFORE + AFTER} {INPUT} Press Enter to continue...{reset}")
+    print(f"\033[96m {ERROR} Invalid token provided.\033[0m")
+    input(f"\033[96m {INPUT} Press Enter to continue...\033[0m")
 
 def OnlyLinux():
-    print(f"{BEFORE + AFTER} {ERROR} This feature is only available on Linux.{red}")
-    input(f"{BEFORE + AFTER} {INPUT} Press Enter to continue...{reset}")
+    print(f"\033[96m {ERROR} This feature is only available on Linux.\033[0m")
+    input(f"\033[96m {INPUT} Press Enter to continue...\033[0m")
 
 def Continue():
-    input(f"{BEFORE + AFTER} {INPUT} Press Enter to continue...{reset}")
+    input(f"\033[96m {INPUT} Press Enter to continue...\033[0m")
 
 def Reset():
     pass
@@ -103,10 +107,11 @@ def Clear():
 
 def CheckWebhook(webhook_url):
     if not webhook_url or not webhook_url.startswith("http"):
-        print(f"{BEFORE + AFTER} {ERROR} Invalid webhook URL.{red}")
+        print(f"\033[96m {ERROR} Invalid webhook URL.\033[0m")
         return False
     return True
 
 color_webhook = 0x00ff00
 username_webhook = "Kernel Tool"
 avatar_webhook = ""
+

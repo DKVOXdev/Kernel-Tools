@@ -356,6 +356,12 @@ class ColorFilter:
     def __getattr__(self, name):
         return getattr(self.original, name)
 
+NO_COLOR_FILTER = [
+    'Ip-Lookup', 'Mail-Info', 'Phone-Lookup',
+    'Username-Tracker', 'Lookup-Ghitub', 'Fake-Identite',
+    'Website-Strength-Scanner', 'Website-Status'
+]
+
 def start_program(name):
     try:
         key = next(k for k,v in OPTIONS.items() if v == name)
@@ -366,19 +372,20 @@ def start_program(name):
 
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Program", f"{name}.py")
     if not os.path.exists(path):
-        print(f"[!] File not found : {name}.py")
-        print(f"    Path: {path}")
-        input("\nEnter to continue...")
+        print(f"\033[96m[!] File not found : {name}.py\033[0m")
+        print(f"\033[96m    Path: {path}\033[0m")
+        input(f"\033[96m\nEnter to continue...\033[0m")
         return
 
     old_out = sys.stdout
     old_err = sys.stderr
     old_input = builtins.input
 
-    filter_out = ColorFilter(old_out, rgb)
-    filter_err = ColorFilter(old_err, rgb)
-    sys.stdout = filter_out
-    sys.stderr = filter_err
+    if name not in NO_COLOR_FILTER:
+        filter_out = ColorFilter(old_out, rgb)
+        filter_err = ColorFilter(old_err, rgb)
+        sys.stdout = filter_out
+        sys.stderr = filter_err
 
     def input_color(prompt=''):
         if prompt:
@@ -420,7 +427,7 @@ def start_program(name):
     except SystemExit:
         pass
     except Exception as e:
-        print(f"[!] Execution error: {e}")
+        Error(e)
     finally:
         os.chdir(old_cwd)
         sys.path[:] = old_path
@@ -452,7 +459,11 @@ while True:
     display_animated_menu(menu_number)
     print("")
     w = shutil.get_terminal_size().columns if shutil.get_terminal_size() else 80
-    choice = input(f"Option: ".center(w // 2)).strip().lower()
+    try:
+        choice = input(f"Option: ".center(w // 2)).strip().lower()
+    except Exception as e:
+        Error(e)
+        continue
 
     if choice in ('n', 'next'):
         menu_number = {"1":"2", "2":"3", "3":"4", "4":"5", "5":"6", "6":"1"}.get(menu_number, "1")
@@ -493,5 +504,8 @@ while True:
                 start_program(OPTIONS[padded])
                 continue
 
-    print("[!] Invalid choice.")
+    try:
+        raise ValueError(f"Invalid choice: {choice}")
+    except Exception as e:
+        Error(e)
     time.sleep(1)

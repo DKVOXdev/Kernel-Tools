@@ -41,10 +41,10 @@ try:
                 domain = domain.split(':')[0]
 
             if not domain:
-                print(f"{BEFORE + AFTER} {ERROR} Invalid URL: {white}{url}{red}")
+                print(f"\033[96m {ERROR} Invalid URL: {domain}\033[0m")
                 return
 
-            print(f"{BEFORE + AFTER} {WAIT} Checking status of {white}{domain}{green}...")
+            print(f"\033[96m {WAIT} Checking status of {domain}...\033[0m")
 
             check_url = f"https://www.isitdownrightnow.com/{domain}.html"
 
@@ -63,26 +63,21 @@ try:
 
                     if re.search(r'is\s+up\.', page_text, re.IGNORECASE):
                         status = "UP"
-                        status_color = green
                         status_icon = GEN_VALID
                     elif re.search(r'is\s+down\.', page_text, re.IGNORECASE):
                         status = "DOWN"
-                        status_color = red
                         status_icon = ERROR
                     else:
                         try:
                             test_response = requests.get(f"https://{domain}", timeout=10, headers=headers, allow_redirects=True)
                             if test_response.status_code < 500:
                                 status = "UP"
-                                status_color = green
                                 status_icon = GEN_VALID
                             else:
                                 status = "DOWN"
-                                status_color = red
                                 status_icon = ERROR
                         except:
                             status = "DOWN"
-                            status_color = red
                             status_icon = ERROR
 
                     last_checked_match = re.search(r'Last checked\s+(\d+\s+(?:second|sec|minute|min|hour|hr)s?\s+ago)', page_text, re.IGNORECASE)
@@ -91,58 +86,58 @@ try:
                     else:
                         last_checked = "Just now"
 
-                    print(f"{BEFORE_GREEN + AFTER_GREEN} {status_icon} Website: {white}{domain}{status_color}")
-                    print(f"{BEFORE_GREEN + AFTER_GREEN} {status_icon} Status: {white}{status}{status_color}")
-                    print(f"{BEFORE_GREEN + AFTER_GREEN} {status_icon} Last Checked: {white}{last_checked}{status_color}")
-                    print(f"{BEFORE_GREEN + AFTER_GREEN} {status_icon} Source: {white}isitdownrightnow.com{status_color}")
+                    print(f"\033[96m {status_icon} Website: {domain}\033[0m")
+                    print(f"\033[96m {status_icon} Status: {status}\033[0m")
+                    print(f"\033[96m {status_icon} Last Checked: {last_checked}\033[0m")
+                    print(f"\033[96m {status_icon} Source: isitdownrightnow.com\033[0m")
 
-                    print(f"\n{BEFORE + AFTER} {WAIT} Verifying directly...")
+                    print(f"\n\033[96m {WAIT} Verifying directly...\033[0m")
                     try:
                         direct_url = f"https://{domain}" if not domain.startswith('http') else domain
                         direct_response = requests.get(direct_url, timeout=10, headers=headers, allow_redirects=True)
 
                         if direct_response.status_code < 500:
-                            print(f"{BEFORE_GREEN + AFTER_GREEN} {GEN_VALID} Direct Check: {white}Accessible{green} Status Code: {white}{direct_response.status_code}{green}")
+                            print(f"\033[96m {GEN_VALID} Direct Check: Accessible Status Code: {direct_response.status_code}\033[0m")
                         else:
-                            print(f"{BEFORE + AFTER} {ERROR} Direct Check: {white}Error{red} Status Code: {white}{direct_response.status_code}{red}")
+                            print(f"\033[96m {ERROR} Direct Check: Error Status Code: {direct_response.status_code}\033[0m")
                     except Exception as e:
-                        print(f"{BEFORE + AFTER} {ERROR} Direct Check: {white}Failed{red} Error: {white}{str(e)[:50]}{red}")
+                        print(f"\033[96m {ERROR} Direct Check: Failed Error: {str(e)[:50]}\033[0m")
 
                 else:
-                    print(f"{BEFORE + AFTER} {ERROR} Failed to check status: {white}HTTP {response.status_code}{red}")
-                    print(f"{BEFORE + AFTER} {WAIT} Attempting direct connection...")
+                    print(f"\033[96m {ERROR} Failed to check status: HTTP {response.status_code}\033[0m")
+                    print(f"\033[96m {WAIT} Attempting direct connection...\033[0m")
                     try:
                         direct_url = f"https://{domain}" if not domain.startswith('http') else domain
                         direct_response = requests.get(direct_url, timeout=10, headers=headers, allow_redirects=True)
                         if direct_response.status_code < 500:
-                            print(f"{BEFORE_GREEN + AFTER_GREEN} {GEN_VALID} Website: {white}{domain}{green} Status: {white}UP{green}")
+                            print(f"\033[96m {GEN_VALID} Website: {domain} Status: UP\033[0m")
                         else:
-                            print(f"{BEFORE + AFTER} {ERROR} Website: {white}{domain}{red} Status: {white}DOWN{red} Status Code: {white}{direct_response.status_code}{red}")
+                            print(f"\033[96m {ERROR} Website: {domain} Status: DOWN Status Code: {direct_response.status_code}\033[0m")
                     except:
-                        print(f"{BEFORE + AFTER} {ERROR} Website: {white}{domain}{red} Status: {white}DOWN{red}")
+                        print(f"\033[96m {ERROR} Website: {domain} Status: DOWN\033[0m")
 
             except requests.exceptions.RequestException as e:
-                print(f"{BEFORE + AFTER} {ERROR} Connection Error: {white}{str(e)[:50]}{red}")
-                print(f"{BEFORE + AFTER} {WAIT} Attempting direct connection...")
+                print(f"\033[96m {ERROR} Connection Error: {str(e)[:50]}\033[0m")
+                print(f"\033[96m {WAIT} Attempting direct connection...\033[0m")
                 try:
                     direct_url = f"https://{domain}" if not domain.startswith('http') else domain
                     direct_response = requests.get(direct_url, timeout=10, headers=headers, allow_redirects=True)
                     if direct_response.status_code < 500:
-                        print(f"{BEFORE_GREEN + AFTER_GREEN} {GEN_VALID} Website: {white}{domain}{green} Status: {white}UP{green}")
+                        print(f"\033[96m {GEN_VALID} Website: {domain} Status: UP\033[0m")
                     else:
-                        print(f"{BEFORE + AFTER} {ERROR} Website: {white}{domain}{red} Status: {white}DOWN{red}")
+                        print(f"\033[96m {ERROR} Website: {domain} Status: DOWN\033[0m")
                 except:
-                    print(f"{BEFORE + AFTER} {ERROR} Website: {white}{domain}{red} Status: {white}DOWN{red}")
+                    print(f"\033[96m {ERROR} Website: {domain} Status: DOWN\033[0m")
 
         except Exception as e:
-            print(f"{BEFORE + AFTER} {ERROR} Error checking website status: {white}{str(e)[:50]}{red}")
+            print(f"\033[96m {ERROR} Error checking website status: {str(e)[:50]}\033[0m")
 
-    print(f"{BEFORE + AFTER} {INFO} Selected User-Agent: {white + user_agent}")
-    website_url = input(f"{BEFORE + AFTER} {INPUT} Website Url -> {reset}")
+    print(f"\033[96m {INFO} Selected User-Agent: {user_agent}\033[0m")
+    website_url = input(f"\033[96m {INPUT} Website Url -> \033[0m")
     Censored(website_url)
 
     if not website_url:
-        print(f"{BEFORE + AFTER} {ERROR} No URL provided{red}")
+        print(f"\033[96m {ERROR} No URL provided\033[0m")
         Continue()
         Reset()
     else:

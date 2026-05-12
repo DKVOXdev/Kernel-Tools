@@ -1,14 +1,18 @@
+# =============================================================================
 # Copyright (c) Kernel-Tool
 # See the file 'LICENSE' for copying permission
-# ----------------------------------------------------------------------------------------------------------------------------------------------------------|
+# =============================================================================
+#
 # EN:
-#     - Do not touch or modify the code below. If there is an error, please contact the owner, but under no circumstances should you touch the code.
+#     - Do not touch or modify the code below. If there is an error, please contact the owner.
 #     - Do not resell this tool, do not credit it to yours.
+#
 # FR:
-#     - Ne pas toucher ni modifier le code ci-dessous. En cas d'erreur, veuillez contacter le propriétaire, mais en aucun cas vous ne devez toucher au code.
+#     - Ne pas toucher ni modifier le code ci-dessous. En cas d'erreur, veuillez contacter le propriétaire.
 #     - Ne revendez pas ce tool, ne le créditez pas au vôtre.
+#
+# =============================================================================
 
-import os
 import random
 from colorama import Fore, Style, init
 
@@ -32,19 +36,16 @@ iban_formats = {
 ascii_banner = Fore.RED + """
  ______  _______    ______   __    __        ________  _______    ______   __    __  _______
 |      \\|       \\  /      \\ |  \\  |  \\      |        \\|       \\  /      \\ |  \\  |  \\|       \\
- \\$$$$$$| $$$$$$$\\|  $$$$$$\\| \[ \\ | \]      | $$$$$$$$| $$$$$$$\\|  $$$$$$\\| \[ | \]| $$$$$$$\\
-  | \[ | \]__/ \[ | \]__| \[ | $$$\\| \]      | \[ __    | \]__| \[ | \]__| \[ | \]  | \[ | \]  | \[ | \]  | \[  \]| \[  \]| $$$$\\ \[ | \]  \\   | \[  \]| \[  \]| \[ | \]| \[ | \]
-  | \[ | $$$$$$$\\| $$$$$$$$| \]\\\[  \]      | $$$$$   | $$$$$$$\\| $$$$$$$$| \[ | \]| \[ | \]
- _| \[ _ | \]__/ \[ | \]  | \[ | \] \\$$$$      | \[ | \]  | \[ | \]  | \[ | \]__/ \[ | \]__/ \[ | \] \\| \[  \]| \[ | \]| \[ \\$$$      | \]      | \[ | \]| \[ | \] \\\[  \]| \[  \]
- \\$$$$$$ \\$$$$$$$  \\\[ \\ \] \\\[ \\ \]       \\\[ \\ \]   \\\[ \\ \]   \\$$  \\$$$$$$  \\$$$$$$$
+ \\$$$$$$| $$$$$$$\\|  $$$$$$\\| \\ | \\      | $$$$$$$$| $$$$$$$\\|  $$$$$$\\| \\ | \\| $$$$$$$\\
+  | \\ | \\__/ \\ | \\__| \\ | $$$\\| \\      | \\ __    | \\__| \\ | \\__| \\ | \\  | \\  | \\  | \\  | \\  \\| \\  \\| $$$$\\ \\ | \\  \\   | \\  \\| \\  \\| \\ | \\| \\ | \\
+  | \\ | $$$$$$$\\| $$$$$$$$| \\]\\[  \\      | $$$$$   | $$$$$$$\\| $$$$$$$$| \\ | \\| \\ | \\
+ _| \\ _ | \\__/ \\ | \\  | \\ | \\ \\$$$$      | \\ | \\  | \\ | \\  | \\ | \\__/ \\ | \\__/ \\ | \\ \\| \\  \\| \\ | \\| \\ \\$$$      | \\      | \\ | \\| \\ | \\ \\[  \\| \\  \\
+ \\$$$$$$ \\$$$$$$$  \\ \\ \\ \\ \\ \\       \\ \\ \\   \\ \\ \\   \\$$  \\$$$$$$  \\$$$$$$$
 
 FRAUD IBAN GENERATOR by Kernel-Tools v1.1
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """ + Style.RESET_ALL
-
-def clear():
-    os.system('cls' if os.name == 'nt' else 'clear')
 
 def generate_bban(country_code):
     format_str = iban_formats[country_code]['bban']
@@ -64,14 +65,13 @@ def generate_multiple_ibans(country_code, count=1):
     return [generate_iban(country_code) for _ in range(count)]
 
 def menu():
-    clear()
     print(ascii_banner)
     print(Fore.RED + 'Available Countries:' + Style.RESET_ALL)
-    
+
     items = list(iban_formats.items())
     col_count = 2
     rows = -(-len(items) // col_count)
-    
+
     for r in range(rows):
         line_parts = []
         for c in range(col_count):
@@ -99,10 +99,9 @@ def menu():
     count_input = input(Fore.RED + 'How many IBANs to generate? (default=1): ' + Style.RESET_ALL).strip()
     count = max(1, int(count_input) if count_input.isdigit() else 1)
 
-    clear()
     print(ascii_banner)
     print(Fore.RED + f"--- IBANs generated for {iban_formats[country_code]['name']} ---" + Style.RESET_ALL)
-    
+
     for iban in generate_multiple_ibans(country_code, count):
         print(Fore.RED + iban + Style.RESET_ALL)
 

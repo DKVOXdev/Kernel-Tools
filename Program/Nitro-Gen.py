@@ -1,12 +1,19 @@
+# =============================================================================
 # Copyright (c) Kernel-Tool
-# See the file 'LICENSE' for copying permission
-# ----------------------------------------------------------------------------------------------------------------------------------------------------------|
-# EN: 
-#     - Do not touch or modify the code below. If there is an error, please contact the owner, but under no circumstances should you touch the code.
-#     - Do not resell this tool, do not credit it to yours.
-# FR: 
-#     - Ne pas toucher ni modifier le code ci-dessous. En cas d'erreur, veuillez contacter le propriétaire, mais en aucun cas vous ne devez toucher au code.
-#     - Ne revendez pas ce tool, ne le créditez pas au vôtre.
+# See the file 'LICENSE' for full licensing information.
+# =============================================================================
+#
+# EN:
+#     - Do not modify or touch the code below.
+#     - If there is an error, contact the owner.
+#     - Do not resell this tool. Do not claim it as your own.
+#
+# FR:
+#     - Ne pas modifier ni toucher au code ci-dessous.
+#     - En cas d'erreur, contactez le propriétaire.
+#     - Ne revendez pas cet outil. Ne le revendiquez pas comme le vôtre.
+#
+# =============================================================================
 
 from Config.Util import *
 from Config.Config import *
@@ -22,16 +29,16 @@ except Exception as e:
 
 Title("Nitro Gen")
 
-import os
-def cls():
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-cls()
+# Force bleu cyan clair partout
+cyan = "\033[1;36m"
+reset = "\033[0m"
 
 try:
-    use_webhook = input(f"{BEFORE + AFTER} {INPUT} Webhook ? (y/n) -> {reset}")
-    if use_webhook in ['y', 'Y', 'Yes', 'yes', 'YES']:
-        webhook_url = input(f"{BEFORE + AFTER} {INPUT} Webhook Url -> {reset}")
+    print(f"{cyan}")
+    use_webhook = input(f"{BEFORE + AFTER} {INPUT} Webhook ? (y/n) -> {reset}").strip()
+
+    if use_webhook.lower() in ['y', 'yes']:
+        webhook_url = input(f"{BEFORE + AFTER} {INPUT} Webhook Url -> {reset}").strip()
         CheckWebhook(webhook_url)
 
     try:
@@ -41,35 +48,40 @@ try:
 
     def send_webhook(nitro_url):
         webhook_payload = {
-        'embeds': [{
-                    'title': f'Nitro Valid !',
-                    'description': f"**Nitro:**\n```{nitro_url}```",
-                    'color': color_webhook,
-                    'footer': {
+            'embeds': [{
+                'title': 'Nitro Valid !',
+                'description': f"**Nitro Verified:**\n```{nitro_url}```",
+                'color': color_webhook,
+                'footer': {
                     "text": username_webhook,
                     "icon_url": avatar_webhook,
-                    }
-                }],
-        'username': username_webhook,
-        'avatar_url': avatar_webhook
+                }
+            }],
+            'username': username_webhook,
+            'avatar_url': avatar_webhook
         }
 
-        webhook_headers = {
-        'Content-Type': 'application/json'
-        }
-
+        webhook_headers = {'Content-Type': 'application/json'}
         requests.post(webhook_url, data=json.dumps(webhook_payload), headers=webhook_headers)
 
     def check_nitro():
         nitro_code = ''.join([random.choice(string.ascii_uppercase + string.digits) for _ in range(16)])
         nitro_url = f'https://discord.gift/{nitro_code}'
-        api_response = requests.get(f'https://discordapp.com/api/v6/entitlements/gift-codes/{nitro_code}?with_application=false&with_subscription_plan=true', timeout=1)
+        
+        try:
+            api_response = requests.get(
+                f'https://discordapp.com/api/v6/entitlements/gift-codes/{nitro_code}?with_application=false&with_subscription_plan=true',
+                timeout=1
+            )
+        except:
+            api_response = type('obj', (object,), {'status_code': 404})()
+
         if api_response.status_code == 200:
-            if use_webhook in ['y']:
+            if use_webhook.lower() in ['y', 'yes']:
                 send_webhook(nitro_url)
-            print(f"{BEFORE_GREEN + AFTER_GREEN} {GEN_VALID} Status:  {white}Valid{green}  Nitro: {white}{nitro_url}{reset}")
+            print(f"{BEFORE + AFTER} {GEN_VALID} Status: {white}Valid {cyan}✅ Verified {cyan}Nitro: {nitro_url}{reset}")
         else:
-            print(f"{BEFORE + AFTER} {GEN_INVALID} Status: {white}Invalid{red} Nitro: {white}{nitro_url}{reset}")
+            print(f"{BEFORE + AFTER} {GEN_INVALID} Status: {white}Invalid {cyan}Nitro: {nitro_url}{reset}")
 
     def run_threads():
         thread_list = []
@@ -84,6 +96,8 @@ try:
         for thread in thread_list:
             thread.join()
 
+    print(f"{cyan}Nitro Generator démarré avec {thread_count} threads...{reset}\n")
+    
     while True:
         run_threads()
 

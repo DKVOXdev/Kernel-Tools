@@ -1,118 +1,152 @@
 # Copyright (c) Kernel-Tool
 # See the file 'LICENSE' for copying permission
-# ----------------------------------------------------------------------------------------------------------------------------------------------------------|
-# EN: 
-#     - Do not touch or modify the code below. If there is an error, please contact the owner, but under no circumstances should you touch the code.
+# ------------------------------------------------------------------------------------------------
+# EN:
+#     - Do not touch or modify the code below. If there is an error, please contact the owner,
+#       but under no circumstances should you touch the code.
 #     - Do not resell this tool, do not credit it to yours.
-# FR: 
-#     - Ne pas toucher ni modifier le code ci-dessous. En cas d'erreur, veuillez contacter le propriétaire, mais en aucun cas vous ne devez toucher au code.
+# FR:
+#     - Ne pas toucher ni modifier le code ci-dessous. En cas d'erreur, veuillez contacter le
+#       propriétaire, mais en aucun cas vous ne devez toucher au code.
 #     - Ne revendez pas ce tool, ne le créditez pas au vôtre.
+# ------------------------------------------------------------------------------------------------
 
 import os
 import sys
 
-
-
-# Color codes
+LC = "\033[38;2;0;200;255m"
+RS = "\033[0m"
 
 class color:
+    RESET   = RS
+    RED     = LC
+    GREEN   = LC
+    YELLOW  = LC
+    BLUE    = LC
+    MAGENTA = LC
+    CYAN    = LC
+    WHITE   = LC
 
-    RESET = "[0m"
+BEFORE       = LC
+AFTER        = RS
+BEFORE_GREEN = LC
+AFTER_GREEN  = RS
 
-    RED = "[91m"
-
-    GREEN = "[92m"
-
-    YELLOW = "[93m"
-
-    BLUE = "[94m"
-
-    MAGENTA = "[95m"
-
-    CYAN = "[96m"
-
-    WHITE = "[97m"
-
-
-
-# ANSI color variables
-
-BEFORE = "[0;37m"
-
-AFTER = "[0m"
-
-BEFORE_GREEN = "[0;32m"
-
-AFTER_GREEN = "[0m"
-
-
-
-# Status indicators
-
-INFO = "[INFO]"
-
-ERROR = "[ERROR]"
-
-WAIT = "[WAIT]"
-
-INPUT = "[INPUT]"
-
-GEN_VALID = "[VALID]"
-
+INFO        = "[INFO]"
+ERROR       = "[ERROR]"
+WAIT        = "[WAIT]"
+INPUT       = "[INPUT]"
+GEN_VALID   = "[VALID]"
 GEN_INVALID = "[INVALID]"
+ADD         = "[ADD]"
+INFO_ADD    = "[+]"
 
-ADD = "[ADD]"
+white = LC
+green = LC
+red   = LC
+blue  = LC
+cyan  = LC
+reset = RS
 
-INFO_ADD = "[+]"
+sql_banner = (
+    f"{LC}"
+    "\n"
+    "╔══════════════════════════════════════════════════════════════╗\n"
+    "║                    Website Strength Scanner                   ║\n"
+    "╚══════════════════════════════════════════════════════════════╝"
+    f"{RS}"
+)
 
+discord_banner = (
+    f"{LC}"
+    "\n"
+    "╔══════════════════════════════════════════════════════════════╗\n"
+    "║                      Discord Tools                            ║\n"
+    "╚══════════════════════════════════════════════════════════════╝"
+    f"{RS}"
+)
 
+map_banner = (
+    f"{LC}"
+    "\n"
+    "╔══════════════════════════════════════════════════════════════╗\n"
+    "║                        IP Lookup                             ║\n"
+    "╚══════════════════════════════════════════════════════════════╝"
+    f"{RS}"
+)
 
-# Color variables
+mail_banner = (
+    f"{LC}"
+    "\n"
+    "╔══════════════════════════════════════════════════════════════╗\n"
+    "║                       Mail Info                               ║\n"
+    "╚══════════════════════════════════════════════════════════════╝"
+    f"{RS}"
+)
 
-white = "[97m"
+status_banner = (
+    f"{LC}"
+    "\n"
+    "╔══════════════════════════════════════════════════════════════╗\n"
+    "║                     Website Status                            ║\n"
+    "╚══════════════════════════════════════════════════════════════╝"
+    f"{RS}"
+)
 
-green = "[92m"
+phone_banner = (
+    f"{LC}"
+    "\n"
+    "╔══════════════════════════════════════════════════════════════╗\n"
+    "║                      Phone Lookup                             ║\n"
+    "╚══════════════════════════════════════════════════════════════╝"
+    f"{RS}"
+)
 
-red = "[91m"
+username_banner = (
+    f"{LC}"
+    "\n"
+    "╔══════════════════════════════════════════════════════════════╗\n"
+    "║                    Username Tracker                           ║\n"
+    "╚══════════════════════════════════════════════════════════════╝"
+    f"{RS}"
+)
 
-blue = "[94m"
+github_banner = (
+    f"{LC}"
+    "\n"
+    "╔══════════════════════════════════════════════════════════════╗\n"
+    "║                      Lookup Github                            ║\n"
+    "╚══════════════════════════════════════════════════════════════╝"
+    f"{RS}"
+)
 
-reset = "[0m"
+fake_identity_banner = (
+    f"{LC}"
+    "\n"
+    "╔══════════════════════════════════════════════════════════════╗\n"
+    "║                      Fake Identity                            ║\n"
+    "╚══════════════════════════════════════════════════════════════╝"
+    f"{RS}"
+)
 
+cookie_login_banner = (
+    f"{LC}"
+    "\n"
+    "╔══════════════════════════════════════════════════════════════╗\n"
+    "║                      Cookie Login                             ║\n"
+    "╚══════════════════════════════════════════════════════════════╝"
+    f"{RS}"
+)
 
-
-# Banners
-
-sql_banner = """
-
-╔══════════════════════════════════════════════════════════════╗
-
-║                    Website Strength Scanner                   ║
-
-╚══════════════════════════════════════════════════════════════╝
-
-"""
-
-
-
-discord_banner = """
-
-╔══════════════════════════════════════════════════════════════╗
-
-║                      Discord Tools                            ║
-
-╚══════════════════════════════════════════════════════════════╝
-
-"""
-
-
-
-# Get tool path
+roblox_banner = (
+    f"{LC}"
+    "\n"
+    "╔══════════════════════════════════════════════════════════════╗\n"
+    "║                      Pseudo Info                              ║\n"
+    "╚══════════════════════════════════════════════════════════════╝"
+    f"{RS}"
+)
 
 tool_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os_name   = "Windows" if os.name == 'nt' else "Linux"
 
-
-
-# OS name
-
-os_name = "Windows" if os.name == 'nt' else "Linux"
