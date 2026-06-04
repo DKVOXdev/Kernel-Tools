@@ -1,20 +1,13 @@
-# Copyright (c) Kernel-Tool                                                      # See the file 'LICENSE' for copying permission
-# ----------------------------------------------------------------------------------------------------------------------------------------------------------|
-# EN:                                                                            #     - Do not touch or modify the code below. If there is an error, please contact the owner, but under no circumstances should you touch the code.
-#     - Do not resell this tool, do not credit it to yours.
-# FR:
-#     - Ne pas toucher ni modifier le code ci-dessous. En cas d'erreur, veuillez contacter le propriétaire, mais en aucun cas vous ne devez toucher au code.
-#     - Ne revendez pas ce tool, ne le créditez pas au vôtre.
-
 import os
 import sys
 import shutil
 import time
 import math
 import subprocess
-import io
 import webbrowser
 import builtins
+import colorama
+from colorama import Fore, Style
 
 try:
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'Program'))
@@ -146,26 +139,10 @@ MENU_PAGES = {
 }
 
 NO_COLOR_FILTER = [
-    'Website-Strength-Scanner',
-    'Website-Status',
-    'Cookie-Login',
-    'Pseudo-Info',
-    'Nitro-Gen',
-    'Token-Info',
-    'Token-Login',
-    'Token-Server-Join',
-    'Token-Block-Friends',
-    'Token-Change-Language',
-    'Delete-Webhook',
-    'Webhook-Spammer',
-    'Ip-Lookup',
-    'Mail-Info',
-    'Phone-Lookup',
-    'Username-Tracker',
-    'Lookup-Ghitub',
-    'Fake-Identite'
-    'create-dox'
-    'zip-cracker'
+    'Website-Strength-Scanner', 'Website-Status', 'Cookie-Login', 'Pseudo-Info', 'Nitro-Gen',
+    'Token-Info', 'Token-Login', 'Token-Server-Join', 'Token-Block-Friends', 'Token-Change-Language',
+    'Delete-Webhook', 'Webhook-Spammer', 'Ip-Lookup', 'Mail-Info', 'Phone-Lookup', 'Username-Tracker',
+    'Lookup-Ghitub', 'Fake-Identite', 'create-dox', 'zip-cracker'
 ]
 
 BASE_BOX_WIDTH = 45
@@ -351,32 +328,17 @@ class ColorFilter:
         self.reset = "\033[0m"
 
     def write(self, text):
-        if not text:
-            return
+        if not text: return
         try:
             self.original.write(self.color + text)
             if text.endswith(('\n', '\r\n')):
                 self.original.write(self.reset)
-        except Exception:
-            try:
-                self.original.write(text)
-            except Exception:
-                pass
+        except:
+            self.original.write(text)
 
     def flush(self):
-        try:
-            self.original.flush()
-        except Exception:
-            pass
-
-    def fileno(self):
-        return self.original.fileno()
-
-    def isatty(self):
-        try:
-            return self.original.isatty()
-        except Exception:
-            return False
+        try: self.original.flush()
+        except: pass
 
     def __getattr__(self, name):
         return getattr(self.original, name)
@@ -392,9 +354,12 @@ def start_program(name):
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Program", f"{name}.py")
     if not os.path.exists(path):
         print(f"\033[96m[!] File not found : {name}.py\033[0m")
-        print(f"\033[96m    Path: {path}\033[0m")
         input(f"\033[96m\nEnter to continue...\033[0m")
         return
+
+    PYTHON_311 = rf"C:\Users\{os.getlogin()}\AppData\Local\Programs\Python\Python311\python.exe"
+    if not os.path.exists(PYTHON_311):
+        PYTHON_311 = "py"
 
     old_out = sys.stdout
     old_err = sys.stderr
@@ -472,20 +437,19 @@ except:
 
 while True:
     try:
-        os.system("title Kernel_tool")
+        if os.name == 'nt':
+            os.system("title Kernel_tool")
     except:
         pass
+    
     display_animated_menu(menu_number)
     print("")
-    try:
-        w = shutil.get_terminal_size().columns
-    except:
-        w = 80
-    try:
-        choice = input(f"Option: ".center(w // 2)).strip().lower()
-    except Exception as e:
-        Error(e)
-        continue
+
+    prompt = f"""
+{Fore.RED}┌──({Fore.LIGHTCYAN_EX}user_pc@kerneltool{Fore.RED})─[{Fore.LIGHTCYAN_EX}~/{os_name}/Menu-{menu_number}{Fore.RED}]{Style.RESET_ALL}
+{Fore.RED}└─$ {Style.RESET_ALL}"""
+    
+    choice = input(prompt).strip().lower()
 
     if choice in ('n', 'next'):
         menu_number = {"1":"2", "2":"3", "3":"4", "4":"5", "5":"6", "6":"1"}.get(menu_number, "1")
