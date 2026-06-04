@@ -1,8 +1,6 @@
-# Copyright (c) Kernel-Tool
-# See the file 'LICENSE' for copying permission
+# Copyright (c) Kernel-Tool                                                      # See the file 'LICENSE' for copying permission
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------|
-# EN:
-#     - Do not touch or modify the code below. If there is an error, please contact the owner, but under no circumstances should you touch the code.
+# EN:                                                                            #     - Do not touch or modify the code below. If there is an error, please contact the owner, but under no circumstances should you touch the code.
 #     - Do not resell this tool, do not credit it to yours.
 # FR:
 #     - Ne pas toucher ni modifier le code ci-dessous. En cas d'erreur, veuillez contacter le propriétaire, mais en aucun cas vous ne devez toucher au code.
@@ -24,13 +22,15 @@ try:
     from Config.Util import *
 except Exception as e:
     print(f"Error importing config: {e}")
-    os_name = "Windows" if os.name == 'nt' else "Linux"
-    tool_path = os.path.dirname(os.path.abspath(__file__))
-    def Clear():
-        try:
-            os.system("cls" if os_name == "Windows" else "clear")
-        except:
-            pass
+
+os_name = "Windows" if os.name == 'nt' else "Linux"
+tool_path = os.path.dirname(os.path.abspath(__file__))
+
+def Clear():
+    try:
+        os.system("cls" if os_name == "Windows" else "clear")
+    except:
+        pass
 
 try:
     from rich.console import Console, Group
@@ -132,34 +132,41 @@ OPTIONS = {
     '51': 'fakevoice',
     '52': 'usb-tool',
     '53': 'exe-to-image',
+    '54': 'create-dox',
+    '55': 'zip-cracker'
 }
 
 MENU_PAGES = {
-    '1': {
-        'title': ' Network ',
-        'categories': [{'title': ' Network ', 'options': ['01', '02','03'], 'color': '#FF4444'}]
-    },
-    '2': {
-        'title': ' OSINT ',
-        'categories': [{'title': ' OSINT & Recon ', 'options': ['40','41','42','43','45','46'], 'color': '#00D4FF'}]
-    },
-    '3': {
-        'title': ' Roblox ',
-        'categories': [{'title': ' Roblox ', 'options': ['20', '21'], 'color': '#FF8844'}]
-    },
-    '4': {
-        'title': ' Discord ',
-        'categories': [{'title': ' Discord ', 'options': ['30','31','32','33','34','35','36','37','38'], 'color': '#FFD700'}]
-    },
-    '5': {
-        'title': ' Scam ',
-        'categories': [{'title': ' Scam ', 'options': ['50','51','52','53'], 'color': '#FF0000'}]
-    },
-    '6': {
-        'title': ' Paid ',
-        'categories': [{'title': ' Malware Build ', 'options': ['10','11','12'], 'color': '#4444FF'}]
-    }
+    '1': {'title': ' Network ', 'categories': [{'title': ' Network ', 'options': ['01', '02','03'], 'color': '#FF4444'}]},
+    '2': {'title': ' OSINT ', 'categories': [{'title': ' OSINT ', 'options': ['40','41','42','43','45','46'], 'color': '#00D4FF'}]},
+    '3': {'title': ' Roblox ', 'categories': [{'title': ' Roblox ', 'options': ['20', '21'], 'color': '#FF8844'}]},
+    '4': {'title': ' Discord ', 'categories': [{'title': ' Discord ', 'options': ['30','31','32','33','34','35','36','37','38'], 'color': '#FFD700'}]},
+    '5': {'title': ' Panel & tools ', 'categories': [{'title': ' Panel & tools ', 'options': ['50','51','52','53','54','55'], 'color': '#FF0000'}]},
+    '6': {'title': ' Malware Build ', 'categories': [{'title': ' Malware Build ', 'options': ['10','11','12'], 'color': '#4444FF'}]}
 }
+
+NO_COLOR_FILTER = [
+    'Website-Strength-Scanner',
+    'Website-Status',
+    'Cookie-Login',
+    'Pseudo-Info',
+    'Nitro-Gen',
+    'Token-Info',
+    'Token-Login',
+    'Token-Server-Join',
+    'Token-Block-Friends',
+    'Token-Change-Language',
+    'Delete-Webhook',
+    'Webhook-Spammer',
+    'Ip-Lookup',
+    'Mail-Info',
+    'Phone-Lookup',
+    'Username-Tracker',
+    'Lookup-Ghitub',
+    'Fake-Identite'
+    'create-dox'
+    'zip-cracker'
+]
 
 BASE_BOX_WIDTH = 45
 MIN_BOX_WIDTH = 28
@@ -344,23 +351,35 @@ class ColorFilter:
         self.reset = "\033[0m"
 
     def write(self, text):
-        if text:
-            self.original.write(self.color)
-            self.original.write(text)
+        if not text:
+            return
+        try:
+            self.original.write(self.color + text)
             if text.endswith(('\n', '\r\n')):
                 self.original.write(self.reset)
+        except Exception:
+            try:
+                self.original.write(text)
+            except Exception:
+                pass
 
     def flush(self):
-        self.original.flush()
+        try:
+            self.original.flush()
+        except Exception:
+            pass
+
+    def fileno(self):
+        return self.original.fileno()
+
+    def isatty(self):
+        try:
+            return self.original.isatty()
+        except Exception:
+            return False
 
     def __getattr__(self, name):
         return getattr(self.original, name)
-
-NO_COLOR_FILTER = [
-    'Ip-Lookup', 'Mail-Info', 'Phone-Lookup',
-    'Username-Tracker', 'Lookup-Ghitub', 'Fake-Identite',
-    'Website-Strength-Scanner', 'Website-Status'
-]
 
 def start_program(name):
     try:
@@ -453,12 +472,15 @@ except:
 
 while True:
     try:
-        os.system("title Kernel_tools")
+        os.system("title Kernel_tool")
     except:
         pass
     display_animated_menu(menu_number)
     print("")
-    w = shutil.get_terminal_size().columns if shutil.get_terminal_size() else 80
+    try:
+        w = shutil.get_terminal_size().columns
+    except:
+        w = 80
     try:
         choice = input(f"Option: ".center(w // 2)).strip().lower()
     except Exception as e:

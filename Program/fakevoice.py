@@ -8,7 +8,6 @@
 #     - Ne pas toucher ni modifier le code ci-dessous. En cas d'erreur, veuillez contacter le propriétaire, mais en aucun cas vous ne devez toucher au code.
 #     - Ne revendez pas ce tool, ne le créditez pas au vôtre.
 
-global _AVAILABLE_VOICE_SHORTNAMES
 import os
 import sys
 import hashlib
